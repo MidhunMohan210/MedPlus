@@ -20,11 +20,11 @@ function DoctorChat() {
   const [messageSent, setMessageSent] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
 
-  // useEffect(()=>{
-  //   socket=io(ENDPOINT)
-  //   socket.emit("setup",doctorInfo)
-  //   socket.on("connection",()=>setSocketConnected(true))
-  // },[])
+  useEffect(()=>{
+    socket=io(ENDPOINT)
+    socket.emit("setup",doctorInfo)
+    socket.on("connection",()=>setSocketConnected(true))
+  },[])
 
   //////fetch rooms///////
 
@@ -78,7 +78,8 @@ function DoctorChat() {
 
         setChats(result);
         setMessageSent(false);
-        // socket.emit("join chat",chatId)
+        selectedChatCompare = chats;
+        socket.emit("join_chat",chatId)
       } catch (error) {
         console.log("error", error);
       }
@@ -117,13 +118,24 @@ function DoctorChat() {
 
         setContent("");
         setMessageSent(true);
-        // socket.emit('new message',result.data)
+        socket.emit('new message',result)
       } catch (error) {
         console.log("error", error);
       }
     };
     sendMessage();
   };
+
+
+
+  useEffect(() => {
+    socket.on('message received',(newMessageReceived)=>{
+      console.log(newMessageReceived);
+        if(!selectedChatCompare || chatId!==newMessageReceived.room._id){ /* empty */ }else{
+            setChats([...chats,newMessageReceived])
+        }
+    })
+})
 
   // console.log(chatId);
   // console.log(patient);

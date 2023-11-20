@@ -3,12 +3,25 @@ import { useEffect, useState } from "react";
 import { BASE_URL, token } from "../../config";
 import { GrSend } from "react-icons/gr";
 import { toast } from "react-toastify";
+import io from "socket.io-client";
+
+const ENDPOINT = "http://localhost:7000";
+var socket, selectedChatCompare;
 
 function ChatUser({ onClose, doctor, user }) {
   const [room, setRoom] = useState({});
   const [content, setContent] = useState("");
   const [messageSent, setMessageSent] = useState(false);
   const [chats, setChats] = useState([]);
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  console.log(user);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connection", () => setSocketConnected(true));
+  }, [ENDPOINT]);
 
   // console.log(user);
 
@@ -71,6 +84,7 @@ function ChatUser({ onClose, doctor, user }) {
         console.log(result);
         setContent("");
         setMessageSent(true);
+        socket.emit('new message',result)
       } catch (error) {
         console.log("error", error);
       }
@@ -104,6 +118,8 @@ function ChatUser({ onClose, doctor, user }) {
 
         setChats(result);
         setMessageSent(false);
+        socket.emit("join_chat", room._id);
+        selectedChatCompare = chats;
       } catch (error) {
         console.log("error", error);
       }
@@ -111,7 +127,13 @@ function ChatUser({ onClose, doctor, user }) {
     fetchMessage();
   }, [room._id, messageSent]);
 
-  console.log(chats);
+  useEffect(() => {
+    socket.on("message received", (newMessageReceived) => {
+      if (!selectedChatCompare || room._id !== newMessageReceived.room._id) { /* empty */ } else {
+        setChats([...chats, newMessageReceived]);
+      }
+    });
+  });
 
   return (
     <div className="flex flex-col items-center justify-center w-[500px] min-h-[540px] text-gray-800 p-10">
@@ -119,17 +141,26 @@ function ChatUser({ onClose, doctor, user }) {
         <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
           {chats && chats.length > 0 ? (
             chats.map((chat, index) => (
-              <div key={index} className={`flex w-full mt-2 space-x-3 max-w-xs ${chat.senderType === "User" ? "ml-auto justify-end" : ""}`}>
+              <div
+                key={index}
+                className={`flex w-full mt-2 space-x-3 max-w-xs ${
+                  chat.senderType === "User" ? "ml-auto justify-end" : ""
+                }`}
+              >
                 {chat.senderType === "User" ? (
-                 <div className="flex w-full mt-2 space-x-3 max-w-xl ml-auto justify-end">
-                 <div>
-                   <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg " >
-                     <p className="text-sm whitespace-normal">{chat.content}</p>
-                   </div>
-                   <span className="text-xs text-gray-500 leading-none">2 min ago</span>
-                 </div>
-                 <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-               </div>
+                  <div className="flex w-full mt-2 space-x-3 max-w-xl ml-auto justify-end">
+                    <div>
+                      <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg ">
+                        <p className="text-sm whitespace-normal">
+                          {chat.content}
+                        </p>
+                      </div>
+                      <span className="text-xs text-gray-500 leading-none">
+                        2 min ago
+                      </span>
+                    </div>
+                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+                  </div>
                 ) : (
                   <div className={`flex w-full mt-2 space-x-3 max-w-xs`}>
                     <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
@@ -149,7 +180,7 @@ function ChatUser({ onClose, doctor, user }) {
             <p>No messages</p>
           )}
         </div>
-  
+
         <div className="bg-blue-500 p-4 flex">
           <input
             onChange={(e) => setContent(e.target.value)}
@@ -167,7 +198,7 @@ function ChatUser({ onClose, doctor, user }) {
           </button>
         </div>
       </div>
-  
+
       <div className="absolute top-2 left-5 cursor-pointer">
         <svg
           onClick={onClose}
@@ -187,8 +218,6 @@ function ChatUser({ onClose, doctor, user }) {
       </div>
     </div>
   );
-  
-  
 }
 
 export default ChatUser;

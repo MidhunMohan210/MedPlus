@@ -62,8 +62,7 @@ export const createRoom = async (req, res) => {
 export const getRoom = async (req, res) => {
   try {
     const { doctorId, userId } = req.params;
-    console.log("doctorId", doctorId);
-    console.log("userId", userId);
+ 
 
     const room = await ChatRoom.find({
       user: userId,

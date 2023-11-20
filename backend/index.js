@@ -63,40 +63,53 @@ const server = app.listen(port, () => {
 });
 
 const io = new Server(server, {
+  pingTimeout: 60000,
   cors: {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"],
   },
 });
 
-// io.on("connection", (socket) => {
-//   console.log("connected with socket io", socket.id);
+io.on("connection", (socket) => {
+  console.log("connected with socket io", socket.id);
 
-//   socket.on("setup", (userData) => {
-//     //  console.log(userData);
-//     socket.join(userData._id); //joined in a room of number userId
-//     socket.emit("connected"); //confirmation to the client that the setup process is complete.
-//   });
+  socket.on("setup", (user) => {
+    //  console.log(userData);
+    socket.join(user); //joined in a room of number userId
+    console.log(user);
+    socket.emit("connected"); //confirmation to the client that the setup process is complete.
+  });
 
-//   socket.on("join_chat",(room)=>{
-//     socket.join(room);
-//     console.log("user joined in the room:",room);
-//   })
+  socket.on("join_chat",(room)=>{
+    socket.join(room);
+    console.log("user joined in the room:",room);
+  })
 
-//   socket.on('new message',(newMessageReceived)=>{
-//     var chat = newMessageReceived.room;
-//     if(!chat.user || !chat.doctor){
-//       return console.log('chat.users not defined')
-//     }
+  socket.on('new message',(newMessageReceived)=>{
+    console.log("newMessageReceived",newMessageReceived);
+    var chat = newMessageReceived.room;
+    if(!chat.user || !chat.doctor){
+      return console.log('chat.users not defined')
+    }
+
+    socket.to(chat._id).emit("message received",newMessageReceived)
     
-//     if(chat.user._id === newMessageReceived.sender._id){
-//       socket.to(chat.doctor._id).emit("message received",newMessageReceived)
-//     }
 
-//     if(chat.doctor._id === newMessageReceived.sender._id){
-//       socket.to(chat.user._id).emit("message received",newMessageReceived)
-//     }
-//   })  
+    // socket.in(chat._id).emit("message received",newMessageReceived)
+    
+    // if(chat.user._id === newMessageReceived.sender._id){
+    //   socket.to(chat._id).emit("message received",newMessageReceived)
+    // }
+
+    // if(chat.doctor._id === newMessageReceived.sender._id){
+    //   socket.to(chat._id).emit("message received",newMessageReceived)
+    // }
+  })  
+
+  socket.off("setup",()=>{
+    console.log("User Disconnected");
+    socket.leave(user)
+  })
 
 
-// });
+});
