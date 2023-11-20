@@ -86,6 +86,7 @@ function DoctorChat() {
     fetchMessages();
   }, [chatId, messageSent]);
 
+
   //// sendHandler /////
 
   const sendHandler = async () => {
