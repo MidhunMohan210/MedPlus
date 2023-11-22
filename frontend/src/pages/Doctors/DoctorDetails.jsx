@@ -178,7 +178,7 @@ function DoctorDetails() {
 
               <div className="mt-[50px]">
                 {tab === "about" && <DoctorAbout details={details} />}
-                {tab === "feedBack" && <DoctorFeedback />}
+                {tab === "feedBack" && <DoctorFeedback details={details} />}
               </div>
             </div>
             <div>

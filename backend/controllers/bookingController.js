@@ -6,7 +6,7 @@ export const saveBookingData = async (req, res) => {
   // console.log("Bokking Data", req.body);
 
   const date = parseISO(req.body.appointmentDate);
-  const IndianDate = format(date, "yyyy-MM-dd");
+  const IndianDate = format(date, "dd/MM/yyyy");
   const paymentId = req.body.paymentId;
 
   const bookingExist = await Booking.findOne({ paymentId: paymentId });
@@ -33,19 +33,38 @@ export const saveBookingData = async (req, res) => {
     const savedBooking = await newBooking.save();
 
     const doctorId = req.body.doctor.details._id;
-    const doctor = await Doctor.findOne({ _id: doctorId });
-    console.log("doctorrr",doctor);
+    let doctor = await Doctor.findOne({ _id: doctorId });
+  
+    const dateIndex = doctor.timeSlots.findIndex(
+      (slot) => slot.indianDate === newBooking.indianDate
+    );
+    if (dateIndex !== -1) {
+      const slotToDelete = newBooking.slot;
 
-    // Find the corresponding slot in the timeSlots array
-    const slotIndex = doctor.timeSlots.findIndex((slot) => {
-      return (
-        slot.indianDate === IndianDate.toString() 
+      const updateResult = await Doctor.updateOne(
+        { _id: doctor._id, "timeSlots.indianDate": newBooking.indianDate },
+        { $pull: { "timeSlots.$.slots": slotToDelete } }
       );
-    });
 
-    console.log("slotIndex",slotIndex);
+      const deleteObj = await Doctor.updateOne(
+        { _id: doctor._id, "timeSlots.indianDate": newBooking.indianDate },
+        {
+          $pull: {
+            timeSlots: {
+              indianDate: newBooking.indianDate,
+              slots: { $size: 0 }
+            }
+          }
+        }
+      )
 
-    
+      console.log(deleteObj);
+      
+
+    }
+
+
+
     res
       .status(200)
       .json({ message: "Booking saved Succesfully", data: savedBooking });

@@ -32,4 +32,6 @@ router.get('/getRoomMessages/:roomId',authenticate,restrict(['patient']),getRoom
 
 
 
+
+
 export default router;

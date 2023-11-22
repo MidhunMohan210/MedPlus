@@ -2,6 +2,7 @@ import Booking from "../models/bookingSchema.js";
 import Doctor from "../models/doctorSchema.js";
 import { format } from "date-fns";
 
+
 ///////// getUserProfile  ////////////
 
 export const getDoctorProfile = async (req, res) => {
@@ -41,7 +42,13 @@ export const getMyAppointments = async (req, res) => {
     //retrieve appointments from bokking database of a specific user
     const bookings = await Booking.find(
       { "doctor._id": doctorId },
-      { "patient.name": 1, indianDate: 1, "patient.photo": 1, slot: 1 ,"isCancelled":1}
+      {
+        "patient.name": 1,
+        indianDate: 1,
+        "patient.photo": 1,
+        slot: 1,
+        isCancelled: 1,
+      }
     );
     console.log("bookings", bookings);
 
@@ -297,7 +304,9 @@ export const removeSlots = async (req, res) => {
 
 export const deleteQualification = async (req, res) => {
   const docId = req.userId;
+  console.log(docId);
   const indexToDelete = req.query.index;
+  console.log("I" , indexToDelete);
 
   try {
     // First, unset the element at the specified index
@@ -330,27 +339,35 @@ export const deleteQualification = async (req, res) => {
 export const deleteExperience = async (req, res) => {
   console.log("heeyyyyy");
   const docId = req.userId;
-  const indexToDelete = req.query.index;
-  console.log("index", indexToDelete);
+  const indexToDelete = req.query.index
+  console.log( indexToDelete);
   console.log(docId);
+  const unsetOperation={};
+  unsetOperation[`experiences.${indexToDelete}`]=1
+  const pullOperation={$pull:{experiences:null}}
 
   try {
-    // First, unset the element (experience object) at the specified index
-    const update = await Doctor.updateOne(
+
+    const hai=await Doctor.updateOne(
       { _id: docId },
       {
-        $unset: { ["experiences." + indexToDelete]: 1 },
+        $unset: unsetOperation,
+        $pull:pullOperation
       }
-    );
+    );   
+     
 
-    console.log(update);
+   console.log(hai);
 
+    // Then, remove any null values from the qualifications array
     await Doctor.updateOne(
       { _id: docId },
       {
         $pull: { experiences: null },
       }
     );
+
+ 
 
     res.status(200).json({ message: "Experience deleted successfully" });
   } catch (error) {
@@ -364,7 +381,6 @@ export const deleteExperience = async (req, res) => {
 ////// cancel appointment /////////
 
 export const cancelAppointment = async (req, res) => {
-
   const bookingId = req.params.id;
   try {
     const cancel = await Booking.findByIdAndUpdate(
@@ -384,5 +400,3 @@ export const cancelAppointment = async (req, res) => {
       .json({ status: false, message: "Booking cancellation failed" });
   }
 };
-
-

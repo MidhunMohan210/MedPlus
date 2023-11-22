@@ -5,8 +5,6 @@ import User from "../models/userSchema.js";
 export const authenticate = async (req, res, next) => {
   //get token from headers
 
-
-
   const authToken = req.headers.authorization;
   // console.log("token", authToken);
 

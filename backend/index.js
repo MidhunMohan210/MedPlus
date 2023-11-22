@@ -7,6 +7,7 @@ import authRoute from "./routes/auth.js";
 import useRoute from "./routes/user.js";
 import doctorRoute from "./routes/doctor.js";
 import adminRoute from "./routes/admin.js";
+import reviewRoute from './routes/review.js'
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -53,6 +54,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", useRoute);
 app.use("/api/doctors", doctorRoute);
 app.use("/api/admin", adminRoute);
+app.use('/api/reviews',reviewRoute)
 
 const server = app.listen(port, () => {
   try {

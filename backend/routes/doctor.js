@@ -22,7 +22,6 @@ router.delete('/deleteQualification',authenticateDoctor,restrict(['doctor']),del
 router.delete('/deleteExperience',authenticateDoctor,restrict(['doctor']),deleteExperience)
 router.put('/cancelAppointment/:id',authenticateDoctor,restrict(['doctor']),cancelAppointment)
 
-
 router.get('/get-doctor-rooms/:id',authenticateDoctor,restrict(['doctor']),getDoctorRooms)
 router.get('/get-room-messages/:roomId',authenticateDoctor,restrict(['doctor']),getRoomMessages)
 router.post('/sendChat/:roomId/:sender/:type',authenticateDoctor,restrict(['doctor']),sendChat)

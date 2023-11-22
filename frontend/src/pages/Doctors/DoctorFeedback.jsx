@@ -4,7 +4,8 @@ import { formDate } from "../../utils/formDate.js";
 import { AiFillStar } from "react-icons/ai";
 import FeedbackForm from "./FeedbackForm";
 
-function DoctorFeedback() {
+function DoctorFeedback({details}) {
+
   const [showFeedBack, setShowFeedBack] = useState(false);
   return (
     <div>
@@ -48,7 +49,7 @@ function DoctorFeedback() {
      }
 
       {
-        showFeedBack && <FeedbackForm/>
+        showFeedBack && <FeedbackForm  details={details} />
       }     
       
     </div>

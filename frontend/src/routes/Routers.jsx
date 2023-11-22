@@ -39,7 +39,7 @@ const Routers = () => {
       <Route path='/otp' element={<Otp/>} />
       <Route path='/doctorOtp' element={<DoctorOtp/>} />
       <Route path='/doctorSignup' element={<DoctorSignup/>} />
-      <Route path='/userProfile' element={ <ProtectedRoute allowedTypes={["patient"]} ><MyAccount/></ProtectedRoute>} />
+      <Route path='/userProfile' element={ <ProtectedRoute allowedTypes={["patient"]} ><MyAccount/> </ProtectedRoute>} />
       <Route path='/users/doctorDetails/:id' element={<DoctorDetails/>} />
       <Route path='/users/paymentSuccess' element={<PaymentSuccess/>} />
       <Route path='/users/paymentFailed' element={<PaymentFailed/>} />

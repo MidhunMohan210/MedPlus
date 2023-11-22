@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import logo2 from "../../assets/images/logo.png";
 import { NavLink, Link } from "react-router-dom";
 import { BiMenu } from "react-icons/bi";
 import { userPath, doctorPath } from "../../config";
 import { useDispatch } from "react-redux";
-import {logoutPatient} from '../../slices/patientAuthSlice.js'
+import { logoutPatient } from "../../slices/patientAuthSlice.js";
+import logo2 from "../../assets/images/logo.png";
 
 const navlinks = [
   {
@@ -12,11 +12,11 @@ const navlinks = [
     display: "Home",
   },
   {
-    path: "users/doctors",
+    path: "/users/doctors", // Fixed missing "/" in the path
     display: "Doctors",
   },
   {
-    path: "/services",
+    path: "/services", // Added "/" to the path
     display: "Services",
   },
   {
@@ -26,38 +26,35 @@ const navlinks = [
 ];
 
 function Header() {
-
-  const dispatch=useDispatch()
-  let path;
-
+  const dispatch = useDispatch();
   const headerRef = useRef(null);
   const menuref = useRef(null);
-  // const { user, dispatch } = useContext(authContext);
-  const user=JSON.parse(localStorage.getItem('PatientInfo'))
 
-  console.log(user);
+  const user = JSON.parse(localStorage.getItem("PatientInfo"));
   const type = user?.type;
   const token = user?.token;
-  path = type === "patient" ? userPath : doctorPath;
+  const path = type === "patient" ? userPath : doctorPath;
 
   const handleStickyHeader = () => {
-    window.addEventListener("scroll", () => {
-      if (
-        document.body.scrollTop > 80 ||
-        document.documentElement.scrollTop > 80
-      ) {
-        headerRef.current.classList.add("sticky__header");
-      } else {
-        headerRef.current.classList.remove("sticky__header");
-      }
-    });
+    if (
+      document.body.scrollTop > 80 ||
+      document.documentElement.scrollTop > 80
+    ) {
+      headerRef.current.classList.add("sticky__header");
+    } else {
+      headerRef.current.classList.remove("sticky__header");
+    }
   };
 
   useEffect(() => {
-    handleStickyHeader();
+    // Attach the event listener directly to the window
+    window.addEventListener("scroll", handleStickyHeader);
 
-    return () => window.removeEventListener("scroll", handleStickyHeader);
-  }, []);
+    return () => {
+      // Remove the event listener when the component unmounts
+      window.removeEventListener("scroll", handleStickyHeader);
+    };
+  }, []); // Empty dependency array to ensure the effect runs only once on mount
 
   const toggleMenu = () => {
     if (menuref.current) {
@@ -66,8 +63,7 @@ function Header() {
   };
 
   const handleLogout = () => {
-   
-    dispatch(logoutPatient())
+    dispatch(logoutPatient());
   };
 
   return (
@@ -89,11 +85,8 @@ function Header() {
                 <li key={index}>
                   <NavLink
                     to={link.path}
-                    className={(navClass) =>
-                      navClass.isActive
-                        ? "text-primaryColor text-[16px] leading-7 font-[600] "
-                        : "text-textColor text-[16px] leading-7 font-[500] hover:text-irisBlueColor "
-                    }
+                    activeClassName="active" // Use activeClassName to set the active class
+                    className="text-textColor text-[16px] leading-7 font-[500] hover:text-irisBlueColor "
                   >
                     <span> {link.display}</span>
                   </NavLink>
@@ -118,7 +111,7 @@ function Header() {
                     <h2 className="flex font-semibold">{user?.name}</h2>
                   </div>
                 </Link>
-                <Link to="/login " className="flex items-center ml-5">
+                <Link to="/login" className="flex items-center ml-5">
                   <button
                     onClick={handleLogout}
                     className="bg-primaryColor py-2 px-6 text-white font-[600] h-[37px] flex items-center cursor-pointer justify-center rounded-[50px]   "

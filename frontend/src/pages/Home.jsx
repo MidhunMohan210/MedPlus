@@ -14,8 +14,6 @@ import Review from "../components/Reviews/Review";
 // import { useDispatch } from "react-redux";
 
 function Home() {
-
-
   return (
     <>
       <div className="bg-[#f6feff]">
@@ -27,14 +25,21 @@ function Home() {
               <div className="flex flex-col items-center w-full text-center lg:w-1/2 lg:items-start lg:text-left">
                 <h1 className="text-[36px] leading-[46px] text-headingColor font-[800] md:text-[60px] md:leading-[70px] lg:text-[55px] ">
                   We help patients live a healthy life
-                </h1>             
+                </h1>
                 <p className="p-2 text__para">
                   Prioritizing your well-being, we're dedicated to helping
                   patients lead healthier lives. With cutting-edge facilities
                   and a caring team, we're here to guide you on your path to
                   wellness
                 </p>
-                <button className="btn">Request an Appointment</button>
+                {/* <button className="btn">Request an Appointment</button> */}
+                <button className="relative group cursor-pointer text-sky-50  overflow-hidden h-12 w-64 rounded-xl bg-sky-800 p-2 mt-4  flex justify-center items-center font-extrabold">
+                  <div className="absolute top-3 right-20 group-hover:top-12 group-hover:-right-12 z-10 w-40 h-40 rounded-full group-hover:scale-150 group-hover:opacity-50 duration-500 bg-sky-900"></div>
+                  <div className="absolute top-3 right-20 group-hover:top-12 group-hover:-right-12 z-10 w-32 h-32 rounded-full group-hover:scale-150 group-hover:opacity-50 duration-500 bg-sky-800"></div>
+                  <div className="absolute top-3 right-20 group-hover:top-12 group-hover:-right-12 z-10 w-24 h-24 rounded-full group-hover:scale-150 group-hover:opacity-50 duration-500 bg-sky-700"></div>
+                  <div className="absolute top-3 right-20 group-hover:top-12 group-hover:-right-12 z-10 w-14 h-14 rounded-full group-hover:scale-150 group-hover:opacity-50 duration-500 bg-sky-600"></div>
+                  <p className="z-10">Request an Appointment</p>
+                </button>
 
                 {/* ===hero counter=== */}
                 <div className="flex flex-col items-center gap-5 mt-5 lg:mt-10 lg:flex-row lg:gap-10 ">
@@ -44,29 +49,33 @@ function Home() {
                         30+
                       </h2>
                       <span className="w-[100px] h-2 bg-yellowColor rounded-full block mt-[-14px]  "></span>
-                    <p className="text__para lg:mt-[6px] md:mt-[6px]">Years of experience</p>
+                      <p className="text__para lg:mt-[6px] md:mt-[6px]">
+                        Years of experience
+                      </p>
                     </div>
                   </div>
 
                   <div>
-                  <div className="flex flex-col items-center justify-center">
-
-                    <h2 className="text-[36px] leading-[56px] lg:text-[30px] lg:leading-[54px] font-[700] text-headingColor  ">
-                      15+
-                    </h2>
-                    <span className="w-[100px] h-2 bg-green-600 rounded-full block mt-[-14px] "></span>
-                    <p className="text__para lg:mt-[6px] md:mt-[6px] ">Clinic Locations</p>
+                    <div className="flex flex-col items-center justify-center">
+                      <h2 className="text-[36px] leading-[56px] lg:text-[30px] lg:leading-[54px] font-[700] text-headingColor  ">
+                        15+
+                      </h2>
+                      <span className="w-[100px] h-2 bg-green-600 rounded-full block mt-[-14px] "></span>
+                      <p className="text__para lg:mt-[6px] md:mt-[6px] ">
+                        Clinic Locations
+                      </p>
                     </div>
                   </div>
 
                   <div>
-                  <div className="flex flex-col items-center justify-center">
-
-                    <h2 className="text-[36px] leading-[56px] lg:text-[30px] lg:leading-[54px] font-[700] text-headingColor  ">
-                      100%
-                    </h2>
-                    <span className="w-[100px] h-2 bg-purple-600 rounded-full block mt-[-14px] "></span>
-                    <p className="text__para lg:mt-[6px] md:mt-[6px]">Patient Satisfaction</p>
+                    <div className="flex flex-col items-center justify-center">
+                      <h2 className="text-[36px] leading-[56px] lg:text-[30px] lg:leading-[54px] font-[700] text-headingColor  ">
+                        100%
+                      </h2>
+                      <span className="w-[100px] h-2 bg-purple-600 rounded-full block mt-[-14px] "></span>
+                      <p className="text__para lg:mt-[6px] md:mt-[6px]">
+                        Patient Satisfaction
+                      </p>
                     </div>
                   </div>
                 </div>
