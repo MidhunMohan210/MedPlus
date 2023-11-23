@@ -23,6 +23,7 @@ router.get('/getAvailableDates/:id',authenticate,restrict(['patient']),getAvaila
 router.post('/makePayment',authenticate,restrict(['patient']),makePayment)
 router.get('/session-status',authenticate,restrict(['patient']),sessionStatus)
 router.post('/saveBookingData',authenticate,restrict(['patient']),saveBookingData)
+
 router.put('/cancelBooking/:id',authenticate,restrict(['patient']),cancelBooking)
 
 router.post('/createRoom/:doctorId/:userId',authenticate,restrict(['patient']),createRoom)

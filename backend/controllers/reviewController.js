@@ -15,6 +15,27 @@ export const getAllReviews = async (req, res) => {
   }
 };
 
+
+
+///grt doctor review////
+
+export const getDoctorReviews = async (req, res) => {
+  const docId=req.params.docId;
+  try {
+    const reviews = await Review.find({doctor:docId}).populate({path:"user",select:"name photo"})
+    res
+      .status(200)
+      .json({ success: true, message: "Successful", data: reviews });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ success: false, message: "Not found" });
+  }
+};
+
+
+
+
+
 ///create Review
 
 export const createReview = async (req, res) => {

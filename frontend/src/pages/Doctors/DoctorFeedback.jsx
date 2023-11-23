@@ -1,57 +1,98 @@
-import { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import avatar from "../../assets/images/avatar-icon.png";
 import { formDate } from "../../utils/formDate.js";
 import { AiFillStar } from "react-icons/ai";
 import FeedbackForm from "./FeedbackForm";
+import { BASE_URL, token } from "../../config.js";
+import dayjs from "dayjs";
 
-function DoctorFeedback({details}) {
 
+function DoctorFeedback({ details }) {
   const [showFeedBack, setShowFeedBack] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // console.log(details);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        // eslint-disable-next-line react/prop-types
+        const res = await fetch(
+          `${BASE_URL}/reviews/getDoctorReviews/${details._id}`,
+          {
+            method: "get",
+            headers: {
+              Authorization: `Bearer ${token} `,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        let result = await res.json();
+        // console.log("result", result.data);
+        setReviews(result.data);
+
+        if (!res.ok) {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    fetchReviews();
+  }, [feedbackSubmitted]);
+
+  // console.log(reviews);
+
   return (
     <div>
       <div className="mt-[50px]">
         <h4 className="text-[20px] leading-[30px] font-bold text-headingColor mb-[30px] ">
-          All reviews (272)
+          All reviews ({reviews.length})
         </h4>
-        <div className="flex justify-start gap-10 mb-[30px]">
-          <div className="flex gap-3">
-            <figure className="w-10 h-10 rounded-full ">
-              <img className="w-full" src={avatar} alt="" />
-            </figure>
-            <div>
-              <h5 className="text-[16px] leading-6 text-primaryColor font-bold  ">
-                Binu Benny
-              </h5>
-              <p className="text-[14px] leading-6 text-textColor  ">
-                {formDate("02-11-2023")}
-              </p>
-              <p className="mt-3 font-medium text__para text-[15px]">
-                Good Service,Highly Recommended 👌
-              </p>
+
+        {reviews.map((el, index) => (
+          <div key={index} className="flex justify-start gap-10 mb-[30px]">
+            <div className="flex gap-3">
+              <figure className="w-10 h-10 rounded-full ">
+                <img className="w-full" src={avatar} alt="" />
+              </figure>
+              <div>
+                <h5 className="text-[16px] leading-4 text-primaryColor font-bold  ">
+                  {el.user.name}
+                </h5>
+                <p className="text-[14px] leading-6 text-textColor  ">
+                  {dayjs(el.createdAt).format("DD/MM/YYYY")}
+                </p>
+                <h3 className="mt-1  text__para text-[16px] font-semibold">
+                  {el.reviewTitle}
+                </h3>
+                <p className="mt-3 font-medium text__para text-[15px]">
+                  {el.reviewText}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-1">
+              {[...Array(el.rating).keys()].map((_, index) => (
+                <AiFillStar key={index} color="#FFBF00" />
+              ))}
             </div>
           </div>
-
-          <div className="flex gap-1">
-            {[...Array(5).keys()].map((_, index) => (
-              <AiFillStar key={index} color="#0067ff" />
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
-     {
-      !showFeedBack && (
+      {!showFeedBack && (
         <div className="text-center">
-        <button onClick={() => setShowFeedBack(true)} className="btn">
-          Give Feedback
-        </button>
-      </div>
-      )
-     }
+          <button onClick={() => setShowFeedBack(true)} className="btn">
+            Give Feedback
+          </button>
+        </div>
+      )}
 
-      {
-        showFeedBack && <FeedbackForm  details={details} />
-      }     
-      
+      {showFeedBack && <FeedbackForm details={details} setFeedbackSubmitted={setFeedbackSubmitted}/>}
     </div>
   );
 }

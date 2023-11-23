@@ -5,20 +5,22 @@ import { BASE_URL, token } from "../../config";
 import { toast } from "react-toastify";
 
 // eslint-disable-next-line react/prop-types
-function FeedbackForm({ details }) {
-  console.log(details);
+function FeedbackForm({ details,setFeedbackSubmitted  }) {
   const user = JSON.parse(localStorage.getItem("PatientInfo"));
-  console.log(user);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewText, setReviewText] = useState("");
-  console.log(rating);
-  console.log(reviewTitle);
-  console.log(reviewText);
+  // const [submit,setSubmit]=useState(false);
+  
+
+  // console.log(rating);
+  // console.log(reviewTitle);
+  // console.log(reviewText);
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
+    setFeedbackSubmitted(false)
 
     const reviewData = {
       rating,
@@ -27,8 +29,8 @@ function FeedbackForm({ details }) {
       doctor: details._id,
       user: user._id,
     };
-    console.log(reviewData);
-
+    // console.log(reviewData);
+    
     try {
       // eslint-disable-next-line react/prop-types
       const res = await fetch(`${BASE_URL}/reviews/createReview`, {
@@ -48,6 +50,7 @@ function FeedbackForm({ details }) {
       }
       setReviewText("");
       setReviewTitle("");
+      setFeedbackSubmitted(true); 
       setTimeout(() => {
         toast.success(result.message);
       }, 1000);

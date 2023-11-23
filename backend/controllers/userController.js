@@ -1,7 +1,8 @@
 import User from "../models/userSchema.js";
-import Bookking from "../models/bookingSchema.js";
+import Booking from "../models/bookingSchema.js";
 import Doctor from "../models/doctorSchema.js";
 import { format } from "date-fns";
+import mongoose from "mongoose";
 
 ///////// getUserProfile  ////////////
 
@@ -36,21 +37,25 @@ export const getMyAppointments = async (req, res) => {
 
   try {
     //retrieve appointments from bokking database of a specific user
-    const bookings = await Bookking.find(
+    const bookings = await Booking.find(
       { "patient._id": userId },
-      { "doctor.name": 1, "doctor.specialization": 1,"doctor.photo":1, "indianDate": 1, "slot": 1,"isCancelled":1 }
+      {
+        "doctor.name": 1,
+        "doctor.specialization": 1,
+        "doctor.photo": 1,
+        indianDate: 1,
+        slot: 1,
+        isCancelled: 1,
+      }
     );
-    console.log("bookings", bookings);
 
     if (bookings.length === 0) {
       throw new Error(" Oops! You didn't have any appointments yet!");
     }
-;
-
     res.status(200).json({
       success: true,
       message: "Appointments are getting",
-      data:bookings,
+      data: bookings,
     });
   } catch (error) {
     console.log(error);
@@ -193,20 +198,28 @@ export const getAvailableDates = async (req, res) => {
   }
 };
 
-
-
 ///cancel bokking //////
 
-
 export const cancelBooking = async (req, res) => {
-
-  console.log("haiii");
   const bookingId = req.params.id;
+  let booking = await Booking.findById(bookingId);
+  const doctor = await Doctor.findById(booking.doctor._id);
+  console.log("doctor", doctor);
+  // console.log("our booking", booking);
+
   try {
-    const cancel = await Bookking.findByIdAndUpdate(
+    const cancel = await Booking.findByIdAndUpdate(
       bookingId,
       { $set: { isCancelled: true } },
       { new: true }
+    );
+
+    console.log("ID", booking.doctor._id);
+    console.log("IND", booking.indianDate);
+
+    const resultUpdate = await Doctor.updateOne(
+      { _id: booking.doctor._id, "timeSlots.indianDate": booking.indianDate },
+      { $push: { "timeSlots.$.slots": booking.slot } }
     );
 
     if (!cancel) {
@@ -215,11 +228,9 @@ export const cancelBooking = async (req, res) => {
 
     res.status(200).json({ status: true, message: "Booking cancelled" });
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ status: false, message: "Booking cancellation failed" });
   }
 };
-
-
-

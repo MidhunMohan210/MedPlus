@@ -6,6 +6,7 @@ import useFetchData from "../../hooks/useFetchData";
 import starIcon from "../../assets/images/Star.png";
 import { Link } from "react-router-dom";
 const path = "http://localhost:7000/doctorMedia/";
+import Swal from 'sweetalert2'
 
 function MyBokking() {
   const {
@@ -16,26 +17,62 @@ function MyBokking() {
     // Function to trigger data fetching
   } = useFetchData(`${BASE_URL}/users/getMyAppointments`);
 
-  console.log(appointments);
+  // console.log(appointments);
   const handleCancel = async (id) => {
-    try {
-      const res = await fetch(`${BASE_URL}/users/cancelBooking/${id}`, {
-        method: "put",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      let result = res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message);
+    // Show confirmation dialog
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, cancel it!",
+      cancelButtonText:"No"
+      
+    });
+  
+    // If user confirms deletion
+    if (confirmResult.isConfirmed) {
+      try {
+        // Make the API call
+        const res = await fetch(`${BASE_URL}/users/cancelBooking/${id}`, {
+          method: "put",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        let result = await res.json();
+  
+        // Check if the API call was successful
+        if (!res.ok) {
+          throw new Error(result.message);
+        }
+  
+        // Display success message
+        Swal.fire({
+          title: "Cancelled!",
+          text: "Your Booking has been cancelled.",
+          icon: "success",
+        });
+  
+        // Perform any additional actions (e.g., refetch data)
+        refetch();
+      } catch (error) {
+        // Handle errors (e.g., display an error message)
+        console.log("error", error);
+  
+        // Display an error message
+        Swal.fire({
+          title: "Error!",
+          text: "An error occurred while deleting the file.",
+          icon: "error",
+        });
       }
-      refetch();
-    } catch (error) {
-      console.log("error", error);
     }
   };
+  
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 mt-8 w-[750px] ">

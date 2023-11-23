@@ -8,7 +8,6 @@ import Loader from "../../components/Loader/Loader";
 import Error from "../../components/About/Error";
 const path = "http://localhost:7000/userMedia/";
 
-
 function MyAccount() {
   // console.log(type);
   const { dispatch } = useContext(authContext);
@@ -20,7 +19,7 @@ function MyAccount() {
     loading,
     error,
     refetch,
-  } = userGetProfile(`${BASE_URL}/users/getUserProfile`,type);
+  } = userGetProfile(`${BASE_URL}/users/getUserProfile`, type);
 
   useEffect(() => {
     if (error) {

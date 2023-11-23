@@ -7,6 +7,7 @@ import { format } from "date-fns";
 
 export const getDoctorProfile = async (req, res) => {
   const doctorId = req.userId;
+  console.log("doctorIddddddd",doctorId);
 
   try {
     const doctor = await Doctor.findById(doctorId);

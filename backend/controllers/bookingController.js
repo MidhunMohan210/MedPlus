@@ -12,10 +12,10 @@ export const saveBookingData = async (req, res) => {
   const bookingExist = await Booking.findOne({ paymentId: paymentId });
 
   try {
-    // if (bookingExist) {
-    //   res.status(200).json({ data: bookingExist });
-    //   return;
-    // }
+    if (bookingExist) {
+      res.status(200).json({ data: bookingExist });
+      return;
+    }
 
     const newBooking = new Booking({
       doctor: req.body.doctor.details,
@@ -74,24 +74,44 @@ export const saveBookingData = async (req, res) => {
   }
 };
 
-const cancelBooking = async (req, res) => {
+export const cancelBooking = async (req, res) => {
+  console.log("haiii");
   const bookingId = req.params.id;
-
   try {
+    const booking = await Booking.findById(bookingId);
+    // console.log('our booking', booking);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
     const cancel = await Booking.findByIdAndUpdate(
       bookingId,
       { $set: { isCancelled: true } },
       { new: true }
     );
 
-    if (!cancel) {
-      return res.status(404).json({ message: "Booking not found" });
-    }
+    const update=await Doctor.updateOne(
+      {
+        _id: booking.doctor._id, // Assuming doctor has its own _id
+        'doctor.timeSlots.indianDate': booking.indianDate,
+      },
+      {
+        $push: {
+          'doctor.timeSlots.$.slots': booking.slot,
+        },
+      }
+    );
+
+    console.log("updateeee",update);
+
 
     res.status(200).json({ status: true, message: "Booking cancelled" });
   } catch (error) {
+    console.error(error);
     res
       .status(500)
       .json({ status: false, message: "Booking cancellation failed" });
   }
 };
+
