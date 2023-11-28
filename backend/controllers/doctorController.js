@@ -2,12 +2,11 @@ import Booking from "../models/bookingSchema.js";
 import Doctor from "../models/doctorSchema.js";
 import { format } from "date-fns";
 
-
 ///////// getUserProfile  ////////////
 
 export const getDoctorProfile = async (req, res) => {
   const doctorId = req.userId;
-  console.log("doctorIddddddd",doctorId);
+  console.log("doctorIddddddd", doctorId);
 
   try {
     const doctor = await Doctor.findById(doctorId);
@@ -51,7 +50,7 @@ export const getMyAppointments = async (req, res) => {
         isCancelled: 1,
       }
     );
-    console.log("bookings", bookings);
+  
 
     if (bookings.length === 0) {
       throw new Error(" Oops! You didn't have any appointments yet!");
@@ -307,7 +306,7 @@ export const deleteQualification = async (req, res) => {
   const docId = req.userId;
   console.log(docId);
   const indexToDelete = req.query.index;
-  console.log("I" , indexToDelete);
+  console.log("I", indexToDelete);
 
   try {
     // First, unset the element at the specified index
@@ -340,25 +339,23 @@ export const deleteQualification = async (req, res) => {
 export const deleteExperience = async (req, res) => {
   console.log("heeyyyyy");
   const docId = req.userId;
-  const indexToDelete = req.query.index
-  console.log( indexToDelete);
+  const indexToDelete = req.query.index;
+  console.log(indexToDelete);
   console.log(docId);
-  const unsetOperation={};
-  unsetOperation[`experiences.${indexToDelete}`]=1
-  const pullOperation={$pull:{experiences:null}}
+  const unsetOperation = {};
+  unsetOperation[`experiences.${indexToDelete}`] = 1;
+  const pullOperation = { $pull: { experiences: null } };
 
   try {
-
-    const hai=await Doctor.updateOne(
+    const hai = await Doctor.updateOne(
       { _id: docId },
       {
         $unset: unsetOperation,
-        $pull:pullOperation
+        $pull: pullOperation,
       }
-    );   
-     
+    );
 
-   console.log(hai);
+    console.log(hai);
 
     // Then, remove any null values from the qualifications array
     await Doctor.updateOne(
@@ -367,8 +364,6 @@ export const deleteExperience = async (req, res) => {
         $pull: { experiences: null },
       }
     );
-
- 
 
     res.status(200).json({ message: "Experience deleted successfully" });
   } catch (error) {
@@ -383,10 +378,66 @@ export const deleteExperience = async (req, res) => {
 
 export const cancelAppointment = async (req, res) => {
   const bookingId = req.params.id;
+  const reason=req.body.reason;
+  let booking = await Booking.findById(bookingId);
+  const doctor = await Doctor.findById(booking.doctor._id);
+
   try {
     const cancel = await Booking.findByIdAndUpdate(
       bookingId,
-      { $set: { isCancelled: true } },
+      { $set: { isCancelled: true , cancelReason:reason} },
+      { new: true }
+    );
+
+    const resultUpdate = await Doctor.updateOne(
+      { _id: booking.doctor._id, "timeSlots.indianDate": booking.indianDate },
+      { $push: { "timeSlots.$.slots": booking.slot } }
+    );
+
+    console.log("resultUpdate", resultUpdate);
+
+    if (resultUpdate.matchedCount === 0) {
+
+      const newTimeSlot = {
+        uniDate: booking.appointmentDate,
+        indianDate: booking.indianDate,
+        slots: [booking.slot],
+      };
+      await Doctor.findByIdAndUpdate(
+        booking.doctor._id,
+  
+        { $push: { timeSlots: newTimeSlot } },
+        { new: true }
+  
+      );
+    }
+
+
+    if (!cancel) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.status(200).json({ status: true, message: "Booking cancelled" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ status: false, message: "Booking cancellation failed" });
+  }
+};
+
+////// cancel appointment with out deleting slot /////////
+
+export const cancelAppointmentDeleteSlot = async (req, res) => {
+  const bookingId = req.params.id;
+  const reason=req.body.reason;
+  let booking = await Booking.findById(bookingId);
+  const doctor = await Doctor.findById(booking.doctor._id);
+
+  try {
+    const cancel = await Booking.findByIdAndUpdate(
+      bookingId,
+      { $set: { isCancelled: true,cancelReason:reason } },
       { new: true }
     );
 

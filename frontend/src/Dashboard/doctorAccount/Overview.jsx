@@ -3,9 +3,7 @@ import starIcon from "../../assets/images/Star.png";
 import DoctorAbout from "../../pages/Doctors/DoctorAbout";
 import { doctorPath } from "../../config";
 
-
-function Overview({userData}) {
- 
+function Overview({ userData }) {
   console.log(userData);
   return (
     <div>
@@ -14,7 +12,11 @@ function Overview({userData}) {
           <div className="md:col-span-2">
             <div className="flex flex-col items-center gap-5 md:flex-row ">
               <figure className="max-w-[300px] max-h-[200px]  ">
-                <img src={`${doctorPath}${userData.photo}`} alt="" className="w-full rounded-lg " />
+                <img
+                  src={`${doctorPath}${userData.photo}`}
+                  alt=""
+                  className="w-full rounded-lg "
+                />
               </figure>
               <div>
                 <span
@@ -24,7 +26,7 @@ function Overview({userData}) {
                   {userData.specialization}
                 </span>
                 <h3 className="text-headingColor text-[22px] leading-9 mt-3 font-bold ">
-               { userData.name}
+                  {userData.name}
                 </h3>
                 <div className="flex items-center gap-[6px] ">
                   <span
@@ -42,17 +44,15 @@ function Overview({userData}) {
                   </span>
                 </div>
                 <p className=" text__para text-[14px] leading-6 md:text-[15px] lg:max-w-[390px]  ">
-                { userData.bio}
+                  {userData.bio}
                 </p>
               </div>
             </div>
 
-           
-
             <div className="mt-[50px]">
-              <DoctorAbout details={userData}  />
-              
+              <DoctorAbout details={userData} />
             </div>
+         
           </div>
         </div>
       </section>

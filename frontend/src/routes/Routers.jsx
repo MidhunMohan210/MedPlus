@@ -5,6 +5,7 @@ import Signup from '../pages/Signup'
 import Contact from '../pages/Contact'
 import Doctors from '../pages/Doctors/Doctor'
 import Otp from '../pages/Otp'
+import DoctorLogin from '../pages/DoctorLogin'
 import DoctorDetails from '../pages/Doctors/DoctorDetails'
 import DoctorSignup from '../pages/Doctors/DoctorSignup'
 import DoctorOtp from '../pages/Doctors/DoctorOtp'
@@ -13,7 +14,7 @@ import DoctorAccount from '../Dashboard/doctorAccount/DoctorAccount'
 import ProtectedRoute from './ProtectedRoutes'
 import ProtectedDoctorRoute from './ProtectedDoctorRoute'
 import {Route,Routes} from "react-router-dom"
-import AdminLogin from '../pages/Admin/adminLogin'
+import AdminLogin from '../pages/Admin/AdminLogin'
 import AdminHome from '../pages/Admin/AdminHome'
 import AdminUsers from '../pages/Admin/AdminUsers'
 import AdminDoctors from '../pages/Admin/AdminDoctors'
@@ -23,28 +24,32 @@ import Error404 from '../components/404Error/Error404'
 import PaymentFailed from '../components/PaymentFailed/PaymentFailed'
 import Appointments from '../pages/Doctors/Appointments'
 import DoctorChat from '../pages/Doctors/DoctorChat'
+import Review from '../pages/Review'
 
 
 const Routers = () => {
   return (
    <Routes>
+     <Route path='/' element={<Home />} />
     <Route path='users/home' element={<Home />} />
     <Route path='/users' element={<Home />} />
       <Route path='/users/doctors' element={<Doctors />} />
       <Route path='/doctors/:id' element={<DoctorDetails />} />
-      <Route path='/login' element={<Login />} />
+      <Route path='users/login' element={<Login />} />
       <Route path='/register' element={<Signup />} />
       <Route path='/contact' element={<Contact/>} />
       <Route path='/services' element={<Services />} />
       <Route path='/otp' element={<Otp/>} />
-      <Route path='/doctorOtp' element={<DoctorOtp/>} />
       <Route path='/doctorSignup' element={<DoctorSignup/>} />
       <Route path='/userProfile' element={ <ProtectedRoute allowedTypes={["patient"]} ><MyAccount/> </ProtectedRoute>} />
       <Route path='/users/doctorDetails/:id' element={<DoctorDetails/>} />
       <Route path='/users/paymentSuccess' element={<PaymentSuccess/>} />
       <Route path='/users/paymentFailed' element={<PaymentFailed/>} />
+      <Route path='/users/bookingDetails/:id' element={<Review/>} />
 
 
+      <Route path='/doctorOtp' element={<DoctorOtp/>} />
+      <Route path='doctors/login' element={<DoctorLogin />} />
       <Route path='doctors/home' element={<Home />} />
       <Route path='/doctors/doctors' element={<Doctors />} />
       <Route path='/doctors/doctorDetails/:id' element={<DoctorDetails/>} />
@@ -57,7 +62,7 @@ const Routers = () => {
 {/* ADMINNNNNN */}
      
       
-      <Route path='/admin/adminLogin' element={<AdminLogin/>}/>
+      <Route path='/admin/login' element={<AdminLogin/>}/>
       <Route path='/admin/home' element={<AdminHome/>}/>
       <Route path='/admin/users' element={<AdminUsers/>}/>
       <Route path='/admin/doctors' element={<AdminDoctors/>}/>

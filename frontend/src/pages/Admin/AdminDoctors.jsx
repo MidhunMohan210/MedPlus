@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { BASE_URL, adminToken } from "../../config";
 // import CertificateModal from "../../components/modals/CertificateModal";
 const path = "http://localhost:7000/doctorMedia/";
+import Swal from 'sweetalert2'
+
 
 const AdminDoctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -11,27 +13,60 @@ const AdminDoctors = () => {
   const [certificate, setCertificate] = useState("");
 
   const modalHandler = (certificate) => {
-    setOpenModal(true);
-    setCertificate(certificate);
+   
+    Swal.fire({
+      title: "Certificate",
+      // text: "Modal with a custom image.",
+      imageUrl: `${path}${certificate}`,
+      imageWidth: 400,
+      imageHeight: 300,
+      imageAlt: "Custom image"
+    });
+    
   };
 
   const handleApprove = async (docId) => {
-    try {
-      const res = await fetch(`${BASE_URL}/admin/HandleApprove/${docId}`, {
-        method: "put",
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-      });
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      // text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, do it!",
+      cancelButtonText:"Cancel it"
+      
+    });
 
-      let result = res.json();
+    if (confirmResult.isConfirmed){
 
-      if (!res.ok) {
-        throw new Error(result.message);
+      try {
+        const res = await fetch(`${BASE_URL}/admin/HandleApprove/${docId}`, {
+          method: "put",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        });
+  
+        let result = res.json();
+  
+        if (!res.ok) {
+          throw new Error(result.message);
+        }
+        Swal.fire({
+          title: "Done!",
+          text: "Your changed the doctor status.",
+          icon: "success",
+        });
+        refetch();
+      } catch (error) {
+        console.log("error", error);
+        Swal.fire({
+          title: "Error!",
+          text: "An error occurred while changing the status .",
+          icon: "error",
+        });
       }
-      refetch();
-    } catch (error) {
-      console.log("error", error);
     }
   };
 
@@ -39,6 +74,21 @@ const AdminDoctors = () => {
   ///handle blockkkk/////
 
   const handleBlock = async (docId) => {
+
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, do it!",
+      cancelButtonText:"Cancel it"
+      
+    });
+
+    if (confirmResult.isConfirmed){
+
     try {
       const res = await fetch(`${BASE_URL}/admin/HandleBlock/${docId}`, {
         method: "put",
@@ -52,11 +102,23 @@ const AdminDoctors = () => {
       if (!res.ok) {
         throw new Error(result.message);
       }
+      Swal.fire({
+        title: "Done!",
+        text: "Your changed the doctor status.",
+        icon: "success",
+      });
       refetch();
     } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "An error occurred while changing the status .",
+        icon: "error",
+      });
       console.log("error", error);
     }
+  }
   };
+    
 
 
 
@@ -151,20 +213,23 @@ const AdminDoctors = () => {
                       </td>
                     )}
 
-                    {doctor.isBlocked ? (
+                    {doctor.isBlocked   ? (
                       <td className="px-6 py-4">
                         <button 
                         onClick={()=>handleBlock(doctor._id)}
-                        className="px-4 py-2 font-semibold text-yellow-700 bg-yellow-100 border border-yellow-500 rounded hover:bg-yellow-500 hover:text-white hover:border-transparent">
-                          Unblock
+                        className={`px-4 py-2 font-semibold text-yellow-700 bg-yellow-100 border border-yellow-500 rounded
+                         hover:bg-yellow-500 hover:text-white hover:border-transparent ${doctor.isApproved ? "" :"opacity-50 cursor-not-allowed pointer-events-none" } `}>
+                          Unblock 
                         </button>
                       </td>
                     ) : (
                       <td className="px-6 py-4">
                         <button 
                         onClick={()=>handleBlock(doctor._id)}
+                    
 
-                        className="px-4 py-2 font-semibold text-red-700 bg-red-100 border border-red-500 rounded hover:bg-red-500 hover:text-white hover:border-transparent">
+                        className={`px-4 py-2 font-semibold text-red-700 bg-red-100 border border-red-500 rounded hover:bg-red-500
+                         hover:text-white hover:border-transparent ${doctor.isApproved ? "" :"opacity-50 cursor-not-allowed pointer-events-none" }`}>
                           Block
                         </button>
                       </td>

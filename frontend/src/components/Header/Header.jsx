@@ -111,7 +111,7 @@ function Header() {
                     <h2 className="flex font-semibold">{user?.name}</h2>
                   </div>
                 </Link>
-                <Link to="/login" className="flex items-center ml-5">
+                <Link to="/logout" className="flex items-center ml-5">
                   <button
                     onClick={handleLogout}
                     className="bg-primaryColor py-2 px-6 text-white font-[600] h-[37px] flex items-center cursor-pointer justify-center rounded-[50px]   "
@@ -122,7 +122,7 @@ function Header() {
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to="/login">
+                <Link to="/users/login">
                   <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[37px] flex items-center cursor-pointer justify-center rounded-[50px]   ">
                     Login
                   </button>

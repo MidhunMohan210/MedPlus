@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
 import Doctor from "../models/doctorSchema.js";
 import User from "../models/userSchema.js";
-import Admin from '../models/adminSchema.js'
+import Admin from "../models/adminSchema.js";
 
 export const authenticateAdmin = async (req, res, next) => {
-
   //get token from headers
 
   const authToken = req.headers.authorization;
@@ -32,16 +31,12 @@ export const authenticateAdmin = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token is expired" });
-    }
 
     return res.status(401).json({ success: false, message: "Invalid Token" });
   }
 };
 
 export const restrict = (type) => async (req, res, next) => {
-
   // console.log("typeeeeeeeee",type);
   const userId = req.userId;
   let user;

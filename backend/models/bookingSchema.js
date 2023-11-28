@@ -32,6 +32,10 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    cancelReason: {
+      type: String,
+      
+    },
     paymentId:{
       required:true,
       type:String

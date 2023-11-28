@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import fechUsers from "../../hooks/useFetchData";
 import { BASE_URL, adminToken } from "../../config";
 import { toast } from "react-toastify";
+import Swal from 'sweetalert2'  
+
 
 
 const AdminUsers = () => {
@@ -17,9 +19,24 @@ const AdminUsers = () => {
     }
   }, [error, loading, data]);
 
-  console.log(users);
+  // console.log(users);
 
   const handleBlock = async (userId) => {
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      // text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, do it!",
+      cancelButtonText:"Cancel it"
+      
+    });
+
+    if (confirmResult.isConfirmed){
+
+
     try {
       const res = await fetch(`${BASE_URL}/admin/blockUser/${userId}`, {
         method: "put",
@@ -34,14 +51,24 @@ const AdminUsers = () => {
       if (!res.ok) {
         throw new Error(result.message);
       }
-        toast.success(result.message);
+      Swal.fire({
+        title: "Done!",
+        text: "Your changed the patient status.",
+        icon: "success",
+      });
+        
       refetch();
     } catch (error) {
       console.log(error);
       
-        toast.error(error.message);
+      Swal.fire({
+        title: "Error!",
+        text: "An error occurred while changing the status.",
+        icon: "error",
+      });
       
     }
+  }
   };
 
   return (

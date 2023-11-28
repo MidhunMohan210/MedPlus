@@ -6,6 +6,9 @@ import { AiFillStar } from "react-icons/ai";
 import FeedbackForm from "./FeedbackForm";
 import { BASE_URL, token } from "../../config.js";
 import dayjs from "dayjs";
+const path = "http://localhost:7000/userMedia/";
+
+
 
 
 function DoctorFeedback({ details }) {
@@ -13,7 +16,7 @@ function DoctorFeedback({ details }) {
   const [reviews, setReviews] = useState([]);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  // console.log(details);
+  console.log(reviews);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -58,7 +61,7 @@ function DoctorFeedback({ details }) {
           <div key={index} className="flex justify-start gap-10 mb-[30px]">
             <div className="flex gap-3">
               <figure className="w-10 h-10 rounded-full ">
-                <img className="w-full" src={avatar} alt="" />
+                <img className="w-full" src={`${path}${el.user.photo}`} alt="" />
               </figure>
               <div>
                 <h5 className="text-[16px] leading-4 text-primaryColor font-bold  ">
@@ -84,15 +87,15 @@ function DoctorFeedback({ details }) {
           </div>
         ))}
       </div>
-      {!showFeedBack && (
+      {/* {!showFeedBack && (
         <div className="text-center">
           <button onClick={() => setShowFeedBack(true)} className="btn">
             Give Feedback
           </button>
         </div>
-      )}
+      )} */}
 
-      {showFeedBack && <FeedbackForm details={details} setFeedbackSubmitted={setFeedbackSubmitted}/>}
+      {/* {showFeedBack && <FeedbackForm details={details} setFeedbackSubmitted={setFeedbackSubmitted}/>} */}
     </div>
   );
 }

@@ -5,22 +5,24 @@ import { BASE_URL, token } from "../../config";
 import { toast } from "react-toastify";
 
 // eslint-disable-next-line react/prop-types
-function FeedbackForm({ details,setFeedbackSubmitted  }) {
+function FeedbackForm({ details, setFeedbackSubmitted }) {
   const user = JSON.parse(localStorage.getItem("PatientInfo"));
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewText, setReviewText] = useState("");
   // const [submit,setSubmit]=useState(false);
-  
 
   // console.log(rating);
   // console.log(reviewTitle);
   // console.log(reviewText);
 
   const handleSubmitReview = async (e) => {
+
+
     e.preventDefault();
-    setFeedbackSubmitted(false)
+    // setFeedbackSubmitted(false);
+    console.log("haiii");
 
     const reviewData = {
       rating,
@@ -30,7 +32,7 @@ function FeedbackForm({ details,setFeedbackSubmitted  }) {
       user: user._id,
     };
     // console.log(reviewData);
-    
+
     try {
       // eslint-disable-next-line react/prop-types
       const res = await fetch(`${BASE_URL}/reviews/createReview`, {
@@ -43,14 +45,15 @@ function FeedbackForm({ details,setFeedbackSubmitted  }) {
       });
 
       let result = await res.json();
-      console.log("result", result.message);
+      toast.success(result.message)
+      // console.log("result", result.message);
 
       if (!res.ok) {
         throw new Error(result.message);
       }
       setReviewText("");
       setReviewTitle("");
-      setFeedbackSubmitted(true); 
+      setFeedbackSubmitted(true);
       setTimeout(() => {
         toast.success(result.message);
       }, 1000);
@@ -115,13 +118,13 @@ function FeedbackForm({ details,setFeedbackSubmitted  }) {
           className="border border-solid border-[#0066ff34] focus:outline outline-primaryColor w-full
         px-4 py-3 rounded-md 
         "
-        value={reviewText}
+          value={reviewText}
           onChange={(e) => setReviewText(e.target.value)}
           placeholder="write your message"
         ></textarea>
       </div>
 
-      <button type="submit" onClick={handleSubmitReview} className="btn">
+      <button type="submit" onClick={handleSubmitReview} className="btn hover:scale-105 transition duration-100 ease-in-out cursor-pointer ">
         Submit Feedback
       </button>
     </form>

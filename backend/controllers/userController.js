@@ -46,6 +46,7 @@ export const getMyAppointments = async (req, res) => {
         indianDate: 1,
         slot: 1,
         isCancelled: 1,
+        cancelReason:1,
       }
     );
 
@@ -67,6 +68,39 @@ export const getMyAppointments = async (req, res) => {
     });
   }
 };
+
+
+
+
+////get appointment details
+export const getAppointmentsDetails = async (req, res) => {
+  const bookingId = req.params.id;
+  console.log("bookingId",bookingId);
+
+  try {
+    //retrieve appointments from bokking database of a specific user
+    const bookings = await Booking.findById(bookingId)
+    
+
+    if (!bookings) {
+      throw new Error(" Oops! You didn't have any such appointments !");
+    }
+    res.status(200).json({
+      success: true,
+      message: "Appointments are getting",
+      data: bookings,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+        ? error.message
+        : "Something Went Wrong ,cannot get appointments",
+    });
+  }
+};
+
 
 ///////// updateUser  ////////////
 

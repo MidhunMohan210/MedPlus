@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import loginImg from "../assets/medplus/login.jpg";
 // import googleImg from "../assets/medplus/google.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,16 @@ import { setPatientCredentials } from "../slices/patientAuthSlice.js";
 import { setDoctorCredentials } from "../slices/doctorAuthSlice.js";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const user = localStorage.getItem("PatientInfo");
+  useEffect(() => {
+    if (user) {
+
+      navigate("/users/home")
+    }
+  },[]);
+
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
@@ -19,7 +29,6 @@ function Login() {
   });
 
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   // const { dispatch } = useContext(authContext);
 
   // State variables for validation

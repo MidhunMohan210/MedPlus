@@ -1,4 +1,3 @@
-import React from "react";
 import { FaInstagram } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
@@ -85,7 +84,7 @@ function Footer() {
 						</li>
 
 						</Link>
-						<Link to='admin/adminLogin'>
+						<Link to='admin/login'>
 						
 						<li className="text-gray-600 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
 							Admin Login

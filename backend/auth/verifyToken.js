@@ -3,7 +3,8 @@ import Doctor from "../models/doctorSchema.js";
 import User from "../models/userSchema.js";
 
 export const authenticate = async (req, res, next) => {
-  //get token from headers
+  // get token from headers
+  console.log("heyyyyyy");
 
   const authToken = req.headers.authorization;
   // console.log("token", authToken);
@@ -22,7 +23,7 @@ export const authenticate = async (req, res, next) => {
 
     //verify token
     const decode = jwt.verify(token, process.env.PATIENT_JWT_SECRET_KEY);
-    // console.log("decode", decode);
+    console.log("decode", decode);
     req.userId = decode.userId;
     req.type = decode.type;
 

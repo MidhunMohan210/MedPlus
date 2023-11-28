@@ -107,7 +107,7 @@ export const login = async (req, res) => {
             }
             // const token = generateToken(user);
 
-            console.log("tokennnmmmmm", token);
+            // console.log("tokennnmmmmm", token);
             // res.cookie("jwtPatient", token, { httpOnly: true, maxAge: maxAge * 1000 });
             const { password, appointments, ...rest } = user._doc;
             res.status(200).json({

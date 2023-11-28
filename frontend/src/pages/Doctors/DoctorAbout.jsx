@@ -1,10 +1,31 @@
 /* eslint-disable react/prop-types */
 import { formDate } from "../../utils/formDate";
+import Swal from 'sweetalert2'
+const path = "http://localhost:7000/doctorMedia/";
 
-function DoctorAbout({details}) {
+
+
+function DoctorAbout({ details }) {
+
+
+
+
   console.log(details);
+  const handleCertificate=()=>{
+    Swal.fire({
+      title: "Certificate",
+      // text: "Modal with a custom image.",
+      imageUrl: `${path}${details.certificate}`,
+      imageWidth: 400,
+      imageHeight: 300,
+      imageAlt: "Custom image"
+    });
+  
+  }
+  
   return (
     <div>
+      
       <div>
         <h3 className="text-[20px] leading-[30px] text-headingColor font-semibold flex items-center gap-2 ">
           About Of
@@ -12,9 +33,12 @@ function DoctorAbout({details}) {
             {details?.name}
           </span>
         </h3>
-        <p className="text__para">
-        {details?.about}
-        </p>
+        <p className="text__para">{details?.about}</p>
+      </div>
+      <div className="mt-12">
+        <button 
+        onClick={()=>handleCertificate()}
+        className="bg-gray-500 p-2 px-3 text-white rounded-md">View certificate</button>
       </div>
       <div className="mt-12">
         <h3
@@ -25,60 +49,53 @@ function DoctorAbout({details}) {
         </h3>
 
         <ul className="pt-4 md:p-5">
-          {
-            details.qualifications && details.qualifications.map((el,index)=>(
-
-
-              <li key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-end md:gap-5 mb-[30px] ">
-              <div>
-                <span className="text-irisBlueColor text-[15px] leading-6 font-semibold">
-                  {formDate(`${el.startDate}`)} -  {formDate(`${el.endDate}`)}
-                </span>
+          {details.qualifications &&
+            details.qualifications.map((el, index) => (
+              <li
+                key={index}
+                className="flex flex-col sm:flex-row sm:justify-between sm:items-end md:gap-5 mb-[30px] "
+              >
+                <div>
+                  <span className="text-irisBlueColor text-[15px] leading-6 font-semibold">
+                    {formDate(`${el.startDate}`)} - {formDate(`${el.endDate}`)}
+                  </span>
+                  <p className="text-[16px] leading-6 font-medium text-textColor">
+                    {el.degree}
+                  </p>
+                </div>
                 <p className="text-[16px] leading-6 font-medium text-textColor">
-               {el.degree}
-                </p>
-              </div>
-              <p className="text-[16px] leading-6 font-medium text-textColor">
                   {el.university}
                 </p>
-            </li>
-
-            ))
-          }
-
-         
-          
+              </li>
+            ))}
         </ul>
       </div>
+
       <div className="mt-12">
-      <h3
+        <h3
           className="text-[20px] leading-[30px] text-headingColor 
         font-semibold   "
         >
           Experience
         </h3>
         <ul className="grid sm:grid-cols-2 gap-[30px] pt-4 md:p-5">
-          {
-            details.experiences && details.experiences.map((el,index)=>(
-
+          {details.experiences &&
+            details.experiences.map((el, index) => (
               <li key={index} className="p-4 rounded bg-[#fff9ea]">
-            <span className="text-yellowColor text-[15px] leading-6
-            font-semibold">
-                  {formDate(`${el.startDate}`)} -  {formDate(`${el.endDate}`)}
-
-            </span>
-            <p className="text-[16px] leading-6 font-medium text-textColor">
-               {el.position}
-              </p>
-            <p className="text-[16px] leading-6 font-semibold text-textColor">
-              {el.hospital}
-              </p>
-          </li>
-        
-
-            ))
-          }
-          
+                <span
+                  className="text-yellowColor text-[15px] leading-6
+            font-semibold"
+                >
+                  {formDate(`${el.startDate}`)} - {formDate(`${el.endDate}`)}
+                </span>
+                <p className="text-[16px] leading-6 font-medium text-textColor">
+                  {el.position}
+                </p>
+                <p className="text-[16px] leading-6 font-semibold text-textColor">
+                  {el.hospital}
+                </p>
+              </li>
+            ))}
         </ul>
       </div>
     </div>

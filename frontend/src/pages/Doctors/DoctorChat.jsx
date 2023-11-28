@@ -3,14 +3,17 @@ import { useEffect, useState, useCallback } from "react";
 import io from "socket.io-client";
 import { BASE_URL, docToken } from "../../config";
 import { toast } from "react-toastify";
+import Error from "../../components/About/Error";
+
 
 const ENDPOINT = "http://localhost:7000";
 
 var socket, selectedChatCompare;
 
 function DoctorChat() {
+  const [error,setError]=useState("")
   const doctorInfo = JSON.parse(localStorage.getItem("doctorInfo"));
-  console.log(doctorInfo);
+  // console.log(doctorInfo);
 
   const [rooms, setRooms] = useState([]);
   const [chatId, setChatId] = useState("");
@@ -49,6 +52,7 @@ function DoctorChat() {
 
         setRooms(result);
       } catch (error) {
+        setError(error)
         console.log("error", error);
       }
     };
@@ -81,6 +85,7 @@ function DoctorChat() {
         selectedChatCompare = chats;
         socket.emit("join_chat",chatId)
       } catch (error) {
+    
         console.log("error", error);
       }
     };
@@ -142,7 +147,10 @@ function DoctorChat() {
   // console.log(chats);
 
   return (
+
     <div>
+      {error && <Error errorMessage={error.message} />}
+      { !error && (
       <div className="flex h-screen antialiased text-gray-800">
         <div className="flex flex-row h-full w-full overflow-x-hidden">
           <div className="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
@@ -251,7 +259,7 @@ function DoctorChat() {
               <div className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
                 <div>
                   <button className="flex items-center justify-center text-gray-400 hover:text-gray-600">
-                    <svg
+                    {/* <svg
                       className="w-5 h-5"
                       fill="none"
                       stroke="currentColor"
@@ -264,7 +272,7 @@ function DoctorChat() {
                         stroke-width="2"
                         d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
                       ></path>
-                    </svg>
+                    </svg> */}
                   </button>
                 </div>
                 <div className="flex-grow ml-4">
@@ -279,7 +287,7 @@ function DoctorChat() {
                       // onClick={() => sendHandler()}
                       className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
                     >
-                      <svg
+                      {/* <svg
                         className="w-6 h-6"
                         fill="none"
                         stroke="currentColor"
@@ -292,7 +300,7 @@ function DoctorChat() {
                           stroke-width="2"
                           d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         ></path>
-                      </svg>
+                      </svg> */}
                     </button>
                   </div>
                 </div>
@@ -325,6 +333,7 @@ function DoctorChat() {
           </div>
         </div>
       </div>
+        )}
     </div>
   );
 }

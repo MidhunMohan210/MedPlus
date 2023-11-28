@@ -1,50 +1,88 @@
 import { useEffect, useState } from "react";
-// import loginImg from "../../assets/medplus/login.jpg";
-import loginImg from "../../assets/medplus/adminLogin.jpg";
-// import googleImg from "../../assets/medplus/google.png";
+import loginImg from "../assets/medplus/login.jpg";
+// import googleImg from "../assets/medplus/google.png";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../config";
+
+import { BASE_URL } from "../config.js";
 import { toast } from "react-toastify";
 import BeatLoader from "react-spinners/BeatLoader";
-import { setaAminCredentials, logoutAdmin } from "../../slices/adminAuthSlice";
 import { useDispatch } from "react-redux";
+import { setPatientCredentials } from "../slices/patientAuthSlice.js";
+import { setDoctorCredentials } from "../slices/doctorAuthSlice.js";
 
-function AdminLogin() {
-  const dispatch = useDispatch();
+function DoctorLogin() {
   const navigate = useNavigate();
- 
+  const doctor=localStorage.getItem("doctorInfo")
 
   useEffect(()=>{
-
-    const admin=localStorage.getItem("adminInfo")
-    if(admin){
-      navigate("/admin/home")
+    if(doctor){
+      navigate("/doctors/home")
     }
 
   })
-
-
-
-
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    type: "",
   });
 
   const [loading, setLoading] = useState(false);
   // const { dispatch } = useContext(authContext);
 
+  // State variables for validation
+  const [errors, setErrors] = useState({});
+  const [isValid, setIsValid] = useState(false);
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    // Validate email
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    if (!formData.email.match(emailRegex)) {
+      errors.email = "Invalid email address";
+    } else {
+      delete errors.email; // Clear the email error if it's valid
+    }
+
+    // Validate password
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!formData.password.match(passwordRegex)) {
+      errors.password =
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 6 characters long.";
+    } else {
+      delete errors.password; // Clear the password error if it's valid
+    }
+
+    // Validate type
+    if (!formData.type) {
+      errors.type = "Please select your type (Doctor/Patient)";
+    } else {
+      delete errors.type; // Clear the type error if it's valid
+    }
+
+    setErrors(errors);
+    setIsValid(Object.keys(errors).length === 0);
   };
 
   const submitHandler = async (event) => {
     event.preventDefault();
 
+    validateForm();
+
+    if (!isValid) {
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch(`${BASE_URL}/admin/login`, {
+      const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -54,21 +92,30 @@ function AdminLogin() {
       });
 
       let result = await res.json();
-      console.log(result);
 
       if (!res.ok) {
         throw new Error(result.message);
       }
+      console.log(result.data);
 
-      dispatch(setaAminCredentials(result));
+      console.log(formData.type);
+      if (formData.type === "patient") {
+        dispatch(setPatientCredentials(result.data));
+      } else {
+        dispatch(setDoctorCredentials(result.data));
+      }
 
       setTimeout(() => {
         setLoading(false);
         toast.success(result.message);
 
         console.log(formData.type);
-
-        navigate("/admin/home");
+        if (formData.type === "doctor") {
+          navigate("/doctors/home");
+        } else {
+          navigate("/users/home");
+          // history.push("/users/home");
+        }
       }, 1000);
     } catch (error) {
       console.log("error", error);
@@ -97,27 +144,35 @@ function AdminLogin() {
         </div> */}
         <div className="my-5 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
           <p className="mx-4 mb-0 font-semibold text-center text-slate-500">
-            Admin Login
+            User Login
           </p>
         </div>
         <form onSubmit={submitHandler}>
           <input
-            className={`text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded `}
+            className={`text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded ${
+              errors.email ? "border-red-500" : ""
+            }`}
             type="text"
             placeholder="Email Address"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
           />
-
+          {errors.email && (
+            <div className="text-sm text-red-500">{errors.email}</div>
+          )}
           <input
-            className={`text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded mt-4 `}
+            className={`text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded mt-4 ${
+              errors.password ? "border-red-500" : ""
+            }`}
             type="password"
             name="password"
             placeholder="Password"
             onChange={handleInputChange}
           />
-
+          {errors.password && (
+            <div className="text-sm text-red-500">{errors.password}</div>
+          )}
           <div className="flex justify-between mt-4 text-sm font-semibold">
             {/* <label className="flex cursor-pointer text-slate-500 hover:text-slate-600">
               <input className="mr-1" type="checkbox" />
@@ -130,7 +185,34 @@ function AdminLogin() {
               Forgot Password?
             </a> */}
           </div>
-
+          <div className="mt-4">
+            <div className="flex items-center gap-4">
+              <label className="mr-4 text-sm text-slate-500">I am a:</label>
+              <label>
+                <input
+                  type="radio"
+                  value="doctor"
+                  name="type"
+                  checked={formData.type === "doctor"}
+                  onChange={handleInputChange}
+                />
+                Doctor
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="patient"
+                  name="type"
+                  checked={formData.type === "patient"}
+                  onChange={handleInputChange}
+                />
+                Patient
+              </label>
+            </div>
+            {errors.type && (
+              <div className="text-sm text-red-500">{errors.type}</div>
+            )}
+          </div>
           <div className="text-center md:text-left">
             <button
               className="px-4 py-2 mt-4 text-xs tracking-wider text-white uppercase bg-blue-600 rounded hover:bg-blue-700"
@@ -158,4 +240,4 @@ function AdminLogin() {
   );
 }
 
-export default AdminLogin;
+export default DoctorLogin;
